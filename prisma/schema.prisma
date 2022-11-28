@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+model aluguel {
+  aluguel_id         Int         @id @default(autoincrement())
+  data_de_aluguel    DateTime    @db.Date
+  inventario_id      Int
+  cliente_id         Int
+  data_de_devolucao  DateTime?   @db.Date
+  funcionario_id     Int
+  ultima_atualizacao DateTime    @default(now()) @db.Timestamp(6)
+  cliente            cliente     @relation(fields: [cliente_id], references: [cliente_id], onDelete: NoAction, map: "fk_aluguel_cliente")
+  funcionario        funcionario @relation(fields: [funcionario_id], references: [funcionario_id], onDelete: NoAction, map: "fk_aluguel_funcionario")
+  inventario         inventario  @relation(fields: [inventario_id], references: [inventario_id], onDelete: NoAction, map: "fk_aluguel_inventario")
+  pagamento          pagamento[]
+
+  @@unique([data_de_aluguel, inventario_id, cliente_id])
+}
+
+model ator {
+  ator_id            Int          @id @default(autoincrement())
+  primeiro_nome      String       @db.VarChar(45)
+  ultimo_nome        String       @db.VarChar(45)
+  ultima_atualizacao DateTime     @default(now()) @db.Timestamp(6)
+  filme_ator         filme_ator[]
+}
+
+model categoria {
+  categoria_id       Int               @id @default(autoincrement())
+  nome               String            @db.VarChar(25)
+  ultima_atualizacao DateTime          @default(now()) @db.Timestamp(6)
+  filme_categoria    filme_categoria[]
+}
+
+model cidade {
+  cidade_id          Int        @id @default(autoincrement())
+  cidade             String     @db.VarChar(50)
+  pais_id            Int
+  ultima_atualizacao DateTime   @default(now()) @db.Timestamp(6)
+  pais               pais       @relation(fields: [pais_id], references: [pais_id], onDelete: NoAction, map: "fk_cidade_pais")
+  endereco           endereco[]
+}
+
+model cliente {
+  cliente_id         Int         @id @default(autoincrement())
+  loja_id            Int
+  primeiro_nome      String      @db.VarChar(45)
+  ultimo_nome        String      @db.VarChar(45)
+  email              String?     @db.VarChar(50)
+  endereco_id        Int
+  ativo              String      @default("1") @db.VarChar(1)
+  data_criacao       DateTime    @db.Date
+  ultima_atualizacao DateTime    @default(now()) @db.Timestamp(6)
+  endereco           endereco    @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, map: "fk_cliente_endereco")
+  loja               loja        @relation(fields: [loja_id], references: [loja_id], onDelete: NoAction, map: "fk_cliente_loja")
+  aluguel            aluguel[]
+  pagamento          pagamento[]
+}
+
+model endereco {
+  endereco_id        Int           @id @default(autoincrement())
+  endereco           String        @db.VarChar(50)
+  endereco2          String?       @db.VarChar(50)
+  bairro             String        @db.VarChar(50)
+  cidade_id          Int
+  cep                String?       @db.VarChar(10)
+  telefone           String        @db.VarChar(20)
+  ultima_atualizacao DateTime      @default(now()) @db.Timestamp(6)
+  cidade             cidade        @relation(fields: [cidade_id], references: [cidade_id], onDelete: NoAction, map: "fk_endereco_cidade")
+  cliente            cliente[]
+  funcionario        funcionario[]
+  loja               loja[]
+}
+
+model filme {
+  filme_id                                Int                     @id @default(autoincrement())
+  titulo                                  String                  @db.VarChar(255)
+  descricao                               String?
+  ano_de_lancamento                       String?                 @db.VarChar(4)
+  idioma_id                               Int
+  idioma_original_id                      Int?
+  duracao_da_locacao                      Int                     @default(3)
+  preco_da_locacao                        Decimal                 @default(4.99) @db.Decimal(4, 2)
+  duracao_do_filme                        Int?
+  custo_de_substituicao                   Decimal                 @default(19.99) @db.Decimal(5, 2)
+  classificacao                           enumclassificacao?      @default(G)
+  recursos_especiais                      enumrecursosespeciais[]
+  ultima_atualizacao                      DateTime                @default(now()) @db.Timestamp(6)
+  idioma_filme_idioma_idToidioma          idioma                  @relation("filme_idioma_idToidioma", fields: [idioma_id], references: [idioma_id], onDelete: NoAction, map: "fk_filme_idioma")
+  idioma_filme_idioma_original_idToidioma idioma?                 @relation("filme_idioma_original_idToidioma", fields: [idioma_original_id], references: [idioma_id], onDelete: NoAction, map: "fk_filme_idioma_original")
+  filme_ator                              filme_ator[]
+  filme_categoria                         filme_categoria[]
+  inventario                              inventario[]
+}
+
+model filme_ator {
+  ator_id            Int
+  filme_id           Int
+  ultima_atualizacao DateTime @default(now()) @db.Timestamp(6)
+  ator               ator     @relation(fields: [ator_id], references: [ator_id], onDelete: NoAction, map: "fk_filme_ator_ator")
+  filme              filme    @relation(fields: [filme_id], references: [filme_id], onDelete: NoAction, map: "fk_filme_ator_filme")
+
+  @@id([ator_id, filme_id])
+}
+
+model filme_categoria {
+  filme_id           Int
+  categoria_id       Int
+  ultima_atualizacao DateTime  @default(now()) @db.Timestamp(6)
+  categoria          categoria @relation(fields: [categoria_id], references: [categoria_id], onDelete: NoAction, map: "fk_filme_categoria_categoria")
+  filme              filme     @relation(fields: [filme_id], references: [filme_id], onDelete: NoAction, map: "fk_filme_categoria_filme")
+
+  @@id([filme_id, categoria_id])
+}
+
+model filme_texto {
+  filme_id  Int     @id
+  titulo    String  @db.VarChar(255)
+  descricao String?
+}
+
+model funcionario {
+  funcionario_id     Int         @id @default(autoincrement())
+  primeiro_nome      String      @db.VarChar(45)
+  ultimo_nome        String      @db.VarChar(45)
+  endereco_id        Int
+  foto               Int?        @db.Oid
+  email              String?     @db.VarChar(50)
+  loja_id            Int
+  ativo              String      @default("1") @db.VarChar(1)
+  usuario            String      @db.VarChar(16)
+  senha              String?     @db.VarChar(40)
+  ultima_atualizacao DateTime    @default(now()) @db.Timestamp(6)
+  endereco           endereco    @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, map: "fk_funcionario_endereco")
+  loja               loja        @relation(fields: [loja_id], references: [loja_id], onDelete: NoAction, map: "fk_funcionario_loja")
+  aluguel            aluguel[]
+  pagamento          pagamento[]
+}
+
+model idioma {
+  idioma_id                              Int      @id @default(autoincrement())
+  nome                                   String   @db.VarChar(20)
+  ultima_atualizacao                     DateTime @default(now()) @db.Timestamp(6)
+  filme_filme_idioma_idToidioma          filme[]  @relation("filme_idioma_idToidioma")
+  filme_filme_idioma_original_idToidioma filme[]  @relation("filme_idioma_original_idToidioma")
+}
+
+model inventario {
+  inventario_id      Int       @id @default(autoincrement())
+  filme_id           Int
+  loja_id            Int
+  ultima_atualizacao DateTime  @default(now()) @db.Timestamp(6)
+  filme              filme     @relation(fields: [filme_id], references: [filme_id], onDelete: NoAction, map: "fk_inventario_filme")
+  loja               loja      @relation(fields: [loja_id], references: [loja_id], onDelete: NoAction, map: "fk_inventario_loja")
+  aluguel            aluguel[]
+}
+
+model loja {
+  loja_id            Int           @id @default(autoincrement())
+  gerente_id         Int
+  endereco_id        Int
+  ultima_atualizacao DateTime      @default(now()) @db.Timestamp(6)
+  endereco           endereco      @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, map: "fk_loja_endereco")
+  cliente            cliente[]
+  funcionario        funcionario[]
+  inventario         inventario[]
+}
+
+model pagamento {
+  pagamento_id       Int         @id
+  cliente_id         Int
+  funcionario_id     Int
+  aluguel_id         Int?
+  valor              Decimal     @db.Decimal(5, 2)
+  data_de_pagamento  DateTime    @db.Date
+  ultima_atualizacao DateTime    @default(now()) @db.Timestamp(6)
+  aluguel            aluguel?    @relation(fields: [aluguel_id], references: [aluguel_id], map: "fk_pagamento_aluguel")
+  cliente            cliente     @relation(fields: [cliente_id], references: [cliente_id], onDelete: NoAction, map: "fk_pagamento_cliente")
+  funcionario        funcionario @relation(fields: [funcionario_id], references: [funcionario_id], onDelete: NoAction, map: "fk_pagamento_funcionario")
+}
+
+model pais {
+  pais_id            Int      @id @default(autoincrement())
+  pais               String   @db.VarChar(50)
+  ultima_atualizacao DateTime @default(now()) @db.Timestamp(6)
+  cidade             cidade[]
+}
+
+enum enumclassificacao {
+  G
+  PG
+  PG_13 @map("PG-13")
+  R
+  NC_17 @map("NC-17")
+}
+
+enum enumrecursosespeciais {
+  Trailers
+  Commentaries
+  Deleted_Scenes    @map("Deleted Scenes")
+  Behind_the_Scenes @map("Behind the Scenes")
+}
