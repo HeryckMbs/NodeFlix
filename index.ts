@@ -13,9 +13,10 @@ app.use(morgan('tiny'))
 app.use(bodyParser.urlencoded({extended: true}))
 
 app.set("view engine","ejs")
-app.set('views', path.resolve(__dirname,"views"))
-app.set('server', express.static(path.resolve(__dirname,"server")))
-app.set('assets', express.static(path.resolve(__dirname,"assets")))
+app.use('views', express.static(path.resolve(__dirname+ "views")))
+app.use('server', express.static(path.resolve(__dirname+"server")))
+app.use('assets', express.static(path.resolve(__dirname+"assets")))
+app.use('/node_modules', express.static(path.resolve(__dirname+"/node_modules")))
 
 const db = require('./server/database/connection')
 db.connectDb()
