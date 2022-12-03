@@ -9,6 +9,7 @@ const router = Router()
 
 
 router.get('/', services.homeRoutes)
+router.get('/loja',services.lojaHome)
 
 router.post('/teste',async (req,res) =>{
     const teste = req.body.teste;
