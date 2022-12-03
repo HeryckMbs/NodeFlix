@@ -9,7 +9,6 @@ import {router} from './server/routes/router';
 const app = express()
 
 app.use(morgan('tiny'))
-
 // app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.json())
 
@@ -30,3 +29,5 @@ app.use(router)
 
 
 app.listen(PORT,()=> console.log('rodou'))
+
+app.route('/loja')
