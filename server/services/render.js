@@ -1,1 +1,4 @@
-exports.homeRoutes = (req,res) => res.render('home/main')
+exports.homeRoutes = function(req,res) {
+    
+    res.render('home/main')
+}

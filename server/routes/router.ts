@@ -1,13 +1,22 @@
-import express from "express";
+import {Router} from "express";
+
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
 const services = require('../services/render')
-const route = express.Router()
-
-route.get('/a', (req,res) => res.send('a'))
-
-route.get('/b', (req,res) => res.send('v'))
-
-route.get('/', services.homeRoutes)
+const router = Router()
 
 
+router.get('/', services.homeRoutes)
 
-module.exports = route;
+router.post('/teste',async (req,res) =>{
+    const teste = req.body.teste;
+    let cog = await prisma.teste2.create(
+        {data: {nTeste:teste}}
+    )
+    return res.json(cog);
+})
+
+
+export { router}

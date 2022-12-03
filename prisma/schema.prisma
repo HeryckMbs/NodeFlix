@@ -195,6 +195,16 @@ model pais {
   cidade             cidade[]
 }
 
+model teste{
+  id                Int @id @default(autoincrement())
+  nTeste            Int 
+}
+
+model teste2{
+  id                Int @id @default(autoincrement())
+  nTeste            Int 
+}
+
 enum enumclassificacao {
   G
   PG
