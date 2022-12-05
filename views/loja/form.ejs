@@ -1,0 +1,45 @@
+<%- include('../partials/modal/modalPart1') %>
+    <div class="row">
+        <div class="col-md-12 form-group">
+            <form>
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <div class="form-text">We'll never share your email with anyone else.</div>
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1">
+                </div>
+
+                <div class="mb-3">
+                    <label for="endereco">Endereço</label>
+                    <select class="form-control" id="endereco" aria-label="Default select example">
+                        <option selected>Open this select menu</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+    <%- include('../partials/modal/modalPart2') %>
+
+        <script>
+            $('#endereco').on('click', function () {
+                $.ajax({
+                    method: 'GET',
+                    url: '/get_enderecos',
+                }).done(function (response) {
+                    $('#endereco option').remove()
+                    response.forEach(element => {
+                        let option = `<option value="${element.categoria_id}">${element.nome}</option>`
+                        $('#endereco').append(option)
+                    })
+
+                })
+            });
+        </script>

@@ -11,10 +11,8 @@ const connectDb = async () => {
             password: process.env.PGPASSWORD,
             port: process.env.PGPORT
         })
- 
         await client.connect()
-        const res = await client.query('SELECT now()')
-        console.log(res)
+        console.log(client._connected == true ? 'Banco de dados Conectado!' :'Erro ao conectar no banco de dados');
         await client.end()
     } catch (error) {
         console.log(error)

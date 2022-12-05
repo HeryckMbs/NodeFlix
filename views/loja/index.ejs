@@ -1,22 +1,69 @@
 <%- include('../partials/layoutPart1') %>
-    <div class="row">
+ 
 
-        <div class="col-md-12">
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-primary" >
-                            <i class="fas fa-plus"></i>
-                            Adicionar Loja
-                            </button>
-                    </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            
+            <div class="card-header">
+                <div class="card-tools">
+                    <button data-toggle="modal" data-target="#form-modal" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Adicionar Loja
+                    </button>
                 </div>
-                <div class="card-body"></div>
-                <div class="card-footer"></div>
             </div>
+            
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="loja_data" class="table table-borderes">
+                        <thead>
+                                    <tr>
+                                      <th>Código Loja</th>
+                                        <th>Gerente</th>
+                                        <th>Endereço</th>
+                                      <th>Bairro</th>
+                                 </tr>
+                                </thead>
+                                <tbody>
+                            
+                                </tbody>
+                </div>
+            </div>
+            
+            <div class="card-footer"></div>
+
         </div>
-
     </div>
+</div>
 
-<%- include('../partials/layoutPart2') %>
+<div class="modal fade" id="form-modal"  aria-hidden="true">
+    <%- include('../loja/form') %> 
+</div>
+
+
+
+    <%- include('../partials/layoutPart2') %>
+    <script>
+
+
+
+    $(document).ready(function () {
+        let dataTable = $('#loja_data').dataTable({
+            'processing': true,
+            'serverSide': true,
+            'serverMethod': 'get',
+            'ajax': {
+                'url':'/get_data_loja'
+            },
+            'data': [],
+            'columns': [
+                {data: 'loja_id' },
+                {data: 'funcionario[0].primeiro_nome' },
+                {data: 'endereco.endereco'},
+                {data: 'endereco.bairro'}
+            ]
+
+        })
+    })
+</script> 

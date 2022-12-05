@@ -8,7 +8,7 @@ const prisma = new PrismaClient()
 import {router} from './server/routes/router';
 const app = express()
 
-app.use(morgan('tiny'))
+// app.use(morgan('tiny'))
 // app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.json())
 
@@ -28,6 +28,6 @@ const PORT = process.env.PORT || 8080;
 app.use(router)
 
 
-app.listen(PORT,()=> console.log('rodou'))
+app.listen(PORT,()=> console.log('Servidor ligado'))
 
 app.route('/loja')

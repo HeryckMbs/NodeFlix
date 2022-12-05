@@ -7,9 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
-
 model aluguel {
   aluguel_id         Int         @id @default(autoincrement())
   data_de_aluguel    DateTime    @db.Date
@@ -60,9 +57,9 @@ model cliente {
   ativo              String      @default("1") @db.VarChar(1)
   data_criacao       DateTime    @db.Date
   ultima_atualizacao DateTime    @default(now()) @db.Timestamp(6)
+  aluguel            aluguel[]
   endereco           endereco    @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, map: "fk_cliente_endereco")
   loja               loja        @relation(fields: [loja_id], references: [loja_id], onDelete: NoAction, map: "fk_cliente_loja")
-  aluguel            aluguel[]
   pagamento          pagamento[]
 }
 
@@ -75,8 +72,9 @@ model endereco {
   cep                String?       @db.VarChar(10)
   telefone           String        @db.VarChar(20)
   ultima_atualizacao DateTime      @default(now()) @db.Timestamp(6)
-  cidade             cidade        @relation(fields: [cidade_id], references: [cidade_id], onDelete: NoAction, map: "fk_endereco_cidade")
+  e_loja             Boolean?
   cliente            cliente[]
+  cidade             cidade        @relation(fields: [cidade_id], references: [cidade_id], onDelete: NoAction, map: "fk_endereco_cidade")
   funcionario        funcionario[]
   loja               loja[]
 }
@@ -140,9 +138,9 @@ model funcionario {
   usuario            String      @db.VarChar(16)
   senha              String?     @db.VarChar(40)
   ultima_atualizacao DateTime    @default(now()) @db.Timestamp(6)
+  aluguel            aluguel[]
   endereco           endereco    @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, map: "fk_funcionario_endereco")
   loja               loja        @relation(fields: [loja_id], references: [loja_id], onDelete: NoAction, map: "fk_funcionario_loja")
-  aluguel            aluguel[]
   pagamento          pagamento[]
 }
 
@@ -159,9 +157,9 @@ model inventario {
   filme_id           Int
   loja_id            Int
   ultima_atualizacao DateTime  @default(now()) @db.Timestamp(6)
+  aluguel            aluguel[]
   filme              filme     @relation(fields: [filme_id], references: [filme_id], onDelete: NoAction, map: "fk_inventario_filme")
   loja               loja      @relation(fields: [loja_id], references: [loja_id], onDelete: NoAction, map: "fk_inventario_loja")
-  aluguel            aluguel[]
 }
 
 model loja {
@@ -169,10 +167,11 @@ model loja {
   gerente_id         Int
   endereco_id        Int
   ultima_atualizacao DateTime      @default(now()) @db.Timestamp(6)
-  endereco           endereco      @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, map: "fk_loja_endereco")
+  is_loja            Boolean?
   cliente            cliente[]
   funcionario        funcionario[]
   inventario         inventario[]
+  endereco           endereco      @relation(fields: [endereco_id], references: [endereco_id], onDelete: NoAction, map: "fk_loja_endereco")
 }
 
 model pagamento {
@@ -195,14 +194,14 @@ model pais {
   cidade             cidade[]
 }
 
-model teste{
-  id                Int @id @default(autoincrement())
-  nTeste            Int 
+model teste {
+  id     Int @id @default(autoincrement())
+  nTeste Int
 }
 
-model teste2{
-  id                Int @id @default(autoincrement())
-  nTeste            Int 
+model teste2 {
+  id     Int @id @default(autoincrement())
+  nTeste Int
 }
 
 enum enumclassificacao {
