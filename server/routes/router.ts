@@ -10,15 +10,28 @@ router.get('/', homeController.homeRoutes);
 /*
     ROTAS DE DADOS
 */
-// router.get('/get_endereco', async (request, response) => {
-//     const enderecos = await prisma.endereco.findMany({
-//         // where:{
-//         //     e_ : true
-//         // }
-//     })
-//     console.log(enderecos)
-//     response.json(enderecos)
-// })
+router.get('/get_endereco', async (request, response) => {
+    const enderecos = await prisma.endereco.findMany({
+        where: {
+            e_loja : null
+        },
+        include:{
+            cidade: true
+        }
+    })
+    response.json(enderecos)
+})
+
+router.get('/get_cidade', async (Request,Response) => {
+    const cidades = await prisma.cidade.findMany({})
+    Response.json(cidades)
+})
+
+router.get('/get_gerentes', async (Request,Response) => {
+    const funcionarios = await prisma.funcionario.findMany({})
+    Response.json(funcionarios)
+})
+
 
 
 /**
